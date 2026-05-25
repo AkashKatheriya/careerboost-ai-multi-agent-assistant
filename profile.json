@@ -1,0 +1,28 @@
+{
+  "name": "Akash Verma",
+  "current_title": "Full-Stack AI Application Developer",
+  "experience_years": 2,
+  "skills": [
+    "Python",
+    "FastAPI",
+    "JavaScript",
+    "HTML5",
+    "CSS3",
+    "Docker",
+    "Git",
+    "Google Gemini API",
+    "REST APIs",
+    "SQL",
+    "JSON Data Engineering"
+  ],
+  "education": "Bachelor's Degree in Computer Science / Web Development",
+  "summary": "Detail-oriented Software Developer specializing in FastAPI backends, vanilla frontend development, and AI agent integration using LLMs.",
+  "projects": [
+    {
+      "title": "CareerBoost AI Multi-Agent Assistant",
+      "role": "Lead Creator & Developer",
+      "technologies": ["Python", "FastAPI", "Gemini 2.5 Flash API", "Docker", "Vanilla JS", "Vanilla CSS"],
+      "description": "Designed and deployed a glassmorphic multi-agent web dashboard featuring PDF resume parsing, automated ATS scoring, personalized upskilling matching, and an interactive mock technical recruiter chat simulation."
+    }
+  ]
+}
