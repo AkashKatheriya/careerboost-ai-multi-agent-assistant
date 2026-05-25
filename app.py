@@ -9,6 +9,7 @@ from agents.resume_optimizer import ResumeOptimizer
 from agents.job_matcher import JobMatcher
 from agents.interview_prep import InterviewPrep
 from agents.linkedin_generator import LinkedInGenerator
+from utils.validators import extract_json_string
 
 app = FastAPI(
     title="CareerBoost AI Multi-Agent Assistant",
@@ -53,9 +54,10 @@ async def optimize_resume(
     else:
         raise HTTPException(status_code=400, detail="Either a resume PDF file or raw resume text must be provided.")
         
+    cleaned_result = extract_json_string(result)
     try:
         # Try parsing response since we requested json_mode from the agent
-        return json.loads(result)
+        return json.loads(cleaned_result)
     except Exception:
         # Fallback to returning raw response string
         return {"raw_response": result}
@@ -86,8 +88,9 @@ async def match_jobs(
     matcher = JobMatcher()
     result = matcher.match(profile_dict, titles_list, x_gemini_api_key)
     
+    cleaned_result = extract_json_string(result)
     try:
-        return json.loads(result)
+        return json.loads(cleaned_result)
     except Exception:
         return {"raw_response": result}
 
