@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerBoost AI | Multi-Agent Career Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Markdown Parser (marked.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <h2>CareerBoost<span>AI</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <button class="nav-item active" data-tab="resume">
+                    <i data-lucide="file-text"></i>
+                    <span>Resume Optimizer</span>
+                </button>
+                <button class="nav-item" data-tab="matcher">
+                    <i data-lucide="git-compare"></i>
+                    <span>Job Matcher</span>
+                </button>
+                <button class="nav-item" data-tab="interview">
+                    <i data-lucide="briefcase"></i>
+                    <span>Interview Prep</span>
+                </button>
+                <button class="nav-item" data-tab="mock">
+                    <i data-lucide="message-square"></i>
+                    <span>Mock Interview</span>
+                </button>
+                <button class="nav-item" data-tab="linkedin">
+                    <i data-lucide="linkedin"></i>
+                    <span>LinkedIn Content</span>
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="api-status" id="api-status-badge">
+                    <span class="status-dot warning"></span>
+                    <span class="status-text">No API Key Loaded</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-title">
+                    <h1 id="tab-title">Resume Optimizer</h1>
+                    <p id="tab-description">Audit your resume, calculate ATS matching, and generate optimized content drafts.</p>
+                </div>
+                <div class="user-profile">
+                    <div class="badge">Google Capstone</div>
+                </div>
+            </header>
+
+            <!-- Tab Content Sections -->
+            <div class="tab-panels">
+                
+                <!-- Resume Optimizer Tab -->
+                <section id="panel-resume" class="tab-panel active">
+                    <div class="grid grid-2">
+                        <!-- Input Form -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3><i data-lucide="upload-cloud"></i> Upload Resume</h3>
+                            </div>
+                            <form id="resume-form" class="card-body">
+                                <div class="form-group">
+                                    <label for="resume-file">Resume PDF</label>
+                                    <div class="upload-dropzone" id="dropzone">
+                                        <i data-lucide="file-text" class="dropzone-icon"></i>
+                                        <p>Drag and drop your PDF resume here, or <span>browse files</span></p>
+                                        <span class="file-name-label" id="file-name">No file selected</span>
+                                        <input type="file" id="resume-file" accept=".pdf" class="hidden">
+                                    </div>
+                                </div>
+                                <div class="form-group-divider"><span>OR</span></div>
+                                <div class="form-group">
+                                    <label for="resume-text">Paste Raw Resume Text</label>
+                                    <textarea id="resume-text" placeholder="Paste the text content of your resume here..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="resume-target">Target Job Title (Optional)</label>
+                                    <input type="text" id="resume-target" placeholder="e.g. Senior Machine Learning Engineer">
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-optimize-resume">
+                                    <i data-lucide="cpu"></i> Run ATS Optimization Agent
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Analysis Results -->
+                        <div class="card glass result-card empty" id="resume-results">
+                            <div class="result-placeholder">
+                                <i data-lucide="activity" class="animate-pulse"></i>
+                                <h4>Awaiting Optimization Request</h4>
+                                <p>Upload or paste your resume and click the run button to begin multi-agent analysis.</p>
+                            </div>
+                            <div class="result-content hidden">
+                                <div class="resume-score-header">
+                                    <div class="score-circle">
+                                        <svg width="120" height="120" viewBox="0 0 120 120">
+                                            <circle cx="60" cy="60" r="50" class="circle-bg"></circle>
+                                            <circle cx="60" cy="60" r="50" class="circle-fg" id="resume-score-circle"></circle>
+                                        </svg>
+                                        <div class="score-number">
+                                            <span id="resume-score-val">0</span>
+                                            <span class="score-label">ATS Score</span>
+                                        </div>
+                                    </div>
+                                    <div class="score-verdict">
+                                        <h4 id="resume-verdict-title">Review Required</h4>
+                                        <p id="resume-verdict-desc">Your resume has been parsed. Review recommendations below to boost compatibility.</p>
+                                    </div>
+                                </div>
+
+                                <div class="tabs-sub">
+                                    <div class="tab-sub-headers">
+                                        <button class="sub-tab-btn active" data-sub="strengths">Strengths</button>
+                                        <button class="sub-tab-btn" data-sub="keywords">Missing Keywords</button>
+                                        <button class="sub-tab-btn" data-sub="suggestions">Improvements</button>
+                                        <button class="sub-tab-btn" data-sub="bullets">Tailored Experience</button>
+                                    </div>
+                                    
+                                    <div class="sub-panel active" id="sub-strengths">
+                                        <ul class="badge-list" id="resume-strengths-list"></ul>
+                                    </div>
+                                    <div class="sub-panel" id="sub-keywords">
+                                        <div class="keywords-container" id="resume-keywords-list"></div>
+                                    </div>
+                                    <div class="sub-panel" id="sub-suggestions">
+                                        <ul class="check-list" id="resume-suggestions-list"></ul>
+                                    </div>
+                                    <div class="sub-panel" id="sub-bullets">
+                                        <div class="markdown-preview" id="resume-bullets-text"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Job Matcher Tab -->
+                <section id="panel-matcher" class="tab-panel">
+                    <div class="grid grid-2">
+                        <!-- Candidate Profile Input -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3><i data-lucide="user-check"></i> Candidate Profile</h3>
+                            </div>
+                            <form id="matcher-form" class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group flex-1">
+                                        <label for="profile-name">Full Name</label>
+                                        <input type="text" id="profile-name" placeholder="Akash Katheriya" required>
+                                    </div>
+                                    <div class="form-group flex-1">
+                                        <label for="profile-experience">Years of Experience</label>
+                                        <input type="number" id="profile-experience" placeholder="3" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-skills">Core Skills (Comma separated)</label>
+                                    <input type="text" id="profile-skills" placeholder="Python, TensorFlow, SQL, AWS, Deep Learning" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-education">Highest Education / Degree</label>
+                                    <input type="text" id="profile-education" placeholder="Bachelor of Technology in Computer Science">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-projects">Featured Projects (Short summary)</label>
+                                    <textarea id="profile-projects" placeholder="Describe 1-2 major projects you have worked on..."></textarea>
+                                </div>
+                                <div class="form-group border-top pt-3">
+                                    <label for="matcher-titles">Target Job Roles to Evaluate (Comma separated)</label>
+                                    <input type="text" id="matcher-titles" placeholder="Data Scientist, ML Engineer, Backend Developer" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-run-matcher">
+                                    <i data-lucide="target"></i> Run Job Matcher Agent
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Matching Results -->
+                        <div class="card glass result-card empty" id="matcher-results">
+                            <div class="result-placeholder">
+                                <i data-lucide="grid" class="animate-pulse"></i>
+                                <h4>Awaiting Evaluation Details</h4>
+                                <p>Provide candidate profile information and target job roles to calculate match metrics.</p>
+                            </div>
+                            <div class="result-content hidden" id="matcher-results-container">
+                                <!-- Dynamically filled cards will render here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Interview Prep Tab -->
+                <section id="panel-interview" class="tab-panel">
+                    <div class="grid grid-2">
+                        <!-- Inputs -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3><i data-lucide="book-open"></i> Prep Configuration</h3>
+                            </div>
+                            <form id="interview-prep-form" class="card-body">
+                                <div class="form-group">
+                                    <label for="prep-job">Target Job Title</label>
+                                    <input type="text" id="prep-job" placeholder="e.g. Senior Machine Learning Engineer" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prep-company">Company Name (Optional)</label>
+                                    <input type="text" id="prep-company" placeholder="e.g. Google">
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-generate-prep">
+                                    <i data-lucide="clipboard-list"></i> Generate Custom Interview Guide
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Output Markdown -->
+                        <div class="card glass result-card empty" id="interview-prep-results">
+                            <div class="result-placeholder">
+                                <i data-lucide="shield-alert" class="animate-pulse"></i>
+                                <h4>No Interview Guide Generated</h4>
+                                <p>Fill in target job details to let our interview coach construct a tailored guide.</p>
+                            </div>
+                            <div class="result-content hidden">
+                                <div class="action-bar">
+                                    <span>Guide Ready</span>
+                                    <button class="btn btn-sm btn-secondary" id="btn-copy-prep">
+                                        <i data-lucide="copy"></i> Copy Guide
+                                    </button>
+                                </div>
+                                <div class="markdown-preview p-3 scrollable-output" id="interview-prep-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mock Interview Tab -->
+                <section id="panel-mock" class="tab-panel">
+                    <div class="grid grid-2">
+                        <!-- Settings / Control -->
+                        <div class="card glass" id="mock-config-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="gamepad-2"></i> Start Mock Session</h3>
+                            </div>
+                            <form id="mock-setup-form" class="card-body">
+                                <div class="form-group">
+                                    <label for="mock-job">Job Role to Practice</label>
+                                    <input type="text" id="mock-job" placeholder="e.g. Fullstack Developer" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mock-company">Target Company (Optional)</label>
+                                    <input type="text" id="mock-company" placeholder="e.g. Microsoft">
+                                </div>
+                                <div class="alert-info">
+                                    <i data-lucide="info"></i>
+                                    <p>The mock interviewer will ask behavioral and technical questions, analyze your answers, and provide feedback interactively.</p>
+                                </div>
+                                <button type="submit" class="btn btn-success" id="btn-start-mock">
+                                    <i data-lucide="play"></i> Initialize Mock Interview
+                                </button>
+                            </form>
+                            
+                            <div class="card-body hidden" id="mock-session-active-card">
+                                <div class="session-info">
+                                    <h4 id="active-mock-title">Technical Interview</h4>
+                                    <p id="active-mock-subtitle">Practicing for role at Google</p>
+                                </div>
+                                <div class="session-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Completed turns:</span>
+                                        <span id="mock-turn-count">0</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger btn-block" id="btn-end-mock">
+                                    <i data-lucide="square"></i> End Interview Session
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Simulator -->
+                        <div class="card glass chat-card empty" id="mock-chat-container">
+                            <div class="chat-placeholder">
+                                <i data-lucide="messages-square"></i>
+                                <h4>Awaiting Session Start</h4>
+                                <p>Initialize the mock interview in the settings panel to connect with your AI interviewer.</p>
+                            </div>
+                            
+                            <div class="chat-wrapper hidden">
+                                <div class="chat-header">
+                                    <div class="interviewer-avatar">AI</div>
+                                    <div class="interviewer-details">
+                                        <h5>Interview Coach</h5>
+                                        <span class="active-pulse">● Live Simulation</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-messages" id="chat-messages-box">
+                                    <!-- Messages rendered dynamically -->
+                                </div>
+                                
+                                <div class="chat-input-area">
+                                    <form id="chat-input-form">
+                                        <input type="text" id="chat-input-text" placeholder="Type your answer here..." autocomplete="off">
+                                        <button type="submit" class="btn btn-primary btn-icon" id="btn-send-chat">
+                                            <i data-lucide="send"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LinkedIn Generator Tab -->
+                <section id="panel-linkedin" class="tab-panel">
+                    <div class="grid grid-2">
+                        <!-- Inputs -->
+                        <div class="card glass">
+                            <div class="card-header">
+                                <h3><i data-lucide="linkedin"></i> Content Blueprint</h3>
+                            </div>
+                            <form id="linkedin-form" class="card-body">
+                                <div class="form-group">
+                                    <label for="linkedin-topic">Topic or Key Message</label>
+                                    <textarea id="linkedin-topic" placeholder="e.g. My experience learning Python and building my first multi-agent agent system..." required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="linkedin-style">Engagement Style / Tone</label>
+                                    <select id="linkedin-style">
+                                        <option value="Professional" selected>Professional & Informative</option>
+                                        <option value="Thought Leadership">Thought Leadership (Insightful)</option>
+                                        <option value="Storytelling">Personal Story (Inspiring / Vulnerable)</option>
+                                        <option value="Casual">Casual & Relatable</option>
+                                        <option value="Technical">Deep Technical Breakdown</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-generate-linkedin">
+                                    <i data-lucide="sparkle"></i> Draft High-Engagement Post
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Outputs -->
+                        <div class="card glass result-card empty" id="linkedin-results">
+                            <div class="result-placeholder">
+                                <i data-lucide="linkedin" class="animate-pulse"></i>
+                                <h4>No Content Drafted</h4>
+                                <p>Describe your topic and choose a tone to generate a formatted LinkedIn post draft.</p>
+                            </div>
+                            <div class="result-content hidden">
+                                <div class="action-bar">
+                                    <span>Draft Post</span>
+                                    <button class="btn btn-sm btn-secondary" id="btn-copy-linkedin">
+                                        <i data-lucide="copy"></i> Copy Post
+                                    </button>
+                                </div>
+                                <div class="markdown-preview p-3 scrollable-output" id="linkedin-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Tab -->
+                <section id="panel-settings" class="tab-panel">
+                    <div class="card glass max-width-600">
+                        <div class="card-header">
+                            <h3><i data-lucide="key"></i> API Configuration</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="settings-help">For safety, your API Key is stored locally in your browser storage and sent via temporary HTTP request headers. It is never stored on the hosting server.</p>
+                            
+                            <form id="settings-form">
+                                <div class="form-group">
+                                    <label for="api-key-input">Google Gemini API Key</label>
+                                    <div class="input-password-wrapper">
+                                        <input type="password" id="api-key-input" placeholder="AIzaSy...">
+                                        <button type="button" class="btn btn-secondary btn-icon" id="btn-toggle-key-visibility">
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-save-key">
+                                    <i data-lucide="save"></i> Save Configuration
+                                </button>
+                            </form>
+                            
+                            <div class="settings-instructions mt-4 pt-4 border-top">
+                                <h4>How to get a free API Key?</h4>
+                                <ol>
+                                    <li>Navigate to <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.</li>
+                                    <li>Log in with your Google account.</li>
+                                    <li>Click on <strong>"Get API Key"</strong>.</li>
+                                    <li>Create a key and paste it above.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toast-box"></div>
+
+    <!-- Custom JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

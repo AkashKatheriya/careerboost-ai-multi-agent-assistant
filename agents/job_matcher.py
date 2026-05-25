@@ -1,31 +1,32 @@
 from utils.gemini_client import GeminiClient
+from config import prompts
 import json
 
 class JobMatcher:
-    def __init__(self):
-        self.client = GeminiClient()
+    def __init__(self, api_key: str = None):
+        self.client = GeminiClient(api_key=api_key)
 
-    def match(self, profile_path: str, job_titles: list) -> str:
-        try:
-            with open(profile_path, 'r') as f:
-                profile_data = json.load(f)
-        except Exception as e:
-            return f"Error reading profile: {str(e)}"
+    def match(self, profile_path_or_dict: any, job_titles: list, api_key: str = None) -> str:
+        if isinstance(profile_path_or_dict, dict):
+            profile_data = profile_path_or_dict
+        else:
+            try:
+                with open(profile_path_or_dict, 'r') as f:
+                    profile_data = json.load(f)
+            except Exception as e:
+                return json.dumps({"error": f"Error reading profile file: {str(e)}"})
 
-        prompt = f"""
-        Analyze the following candidate profile and match it against the provided job titles.
+        job_titles_list = ", ".join(job_titles) if isinstance(job_titles, list) else job_titles
 
-        Profile:
-        {json.dumps(profile_data, indent=2)}
+        prompt = prompts.JOB_MATCHER_PROMPT.format(
+            job_titles_list=job_titles_list,
+            profile_json=json.dumps(profile_data, indent=2)
+        )
 
-        Job Titles:
-        {', '.join(job_titles)}
+        return self.client.generate_content(
+            prompt=prompt,
+            system_instruction=prompts.JOB_MATCHER_SYSTEM,
+            request_api_key=api_key,
+            json_mode=True
+        )
 
-        For each job title, provide:
-        1. Match Percentage
-        2. Key Strength matches
-        3. Missing Skills/Gaps
-        4. Recommendation (Apply/Upskill)
-        """
-
-        return self.client.generate_content(prompt)

@@ -1,124 +1,48 @@
 # 🤖 CareerBoost AI Multi-Agent Assistant
 
-**Multi-Agent AI Career Assistant using Google Gemini 1.5 Flash** - Resume optimization, job matching, interview prep & LinkedIn content generation | Google AI Agents Intensive Capstone Project
+**CareerBoost AI** is an intelligent, multi-agent career assistant powered by **Google Gemini 2.5 Flash** (via the official `google-genai` SDK). It provides a visually stunning, glassmorphic Single Page Application (SPA) dashboard helping job seekers optimize resumes, match candidate profiles to roles, prepare for interviews with an interactive mock recruiter chat, and generate engaging LinkedIn content.
 
-## 📋 Overview
-
-CareerBoost is an intelligent AI-powered career assistant that leverages **Google's Gemini 1.5 Flash** model with multi-agent architecture to help job seekers optimize their career journey. It provides comprehensive support across resume optimization, job matching, interview preparation, and LinkedIn profile enhancement.
-
-### Key Features
-- ✨ **Resume Optimization** - AI-powered resume enhancement with keyword optimization
-- 🎯 **Job Matching** - Intelligent job recommendations based on your profile
-- 💼 **Interview Prep** - Customized interview questions and preparation strategies
-- 📱 **LinkedIn Content** - Generate professional content for LinkedIn visibility
-- 🤖 **Multi-Agent Architecture** - Specialized AI agents for different career tasks
+Designed specifically to be **open-source friendly and safe to host**, visitors can supply their own Gemini API key inside the UI settings (saved only in their local browser storage and transmitted via request headers).
 
 ---
 
-## 🚀 Quick Start
+## ✨ Key Features
 
-### Prerequisites
-- Python 3.10 or higher
-- pip (Python package manager)
-- Google Gemini API Key (Free tier available)
-- Git
+1. **Resume Optimizer (ATS Auditor)**
+   - Drag and drop PDF resume parsing.
+   - Comprehensive ATS scoring (0-100) and strengths audit.
+   - Target job keyword comparison (missing keywords extraction).
+   - Re-written high-impact bullet points using the **Google X-Y-Z formula** (*"Accomplished [X], as measured by [Y], by doing [Z]"*).
 
-### Installation
+2. **Job Matcher**
+   - Form-based candidate profiling (skills, experience, projects).
+   - Match percentage and strength overlap.
+   - Core skill gap identification.
+   - Personalized upskilling roadmaps and learning paths.
 
-1. **Clone the Repository**
-```bash
-git clone https://github.com/AkashKatheriya/careerboost-ai-multi-agent-assistant.git
-cd careerboost-ai-multi-agent-assistant
-```
+3. **Interview Preparation**
+   - Company-specific preparation guides.
+   - 5 customized technical questions with model answers.
+   - 3 behavioral questions outline using the STAR method.
 
-2. **Create Virtual Environment** (Recommended)
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+4. **Mock Interview Simulator**
+   - Interactive, turn-by-turn chat with an AI technical recruiter.
+   - Evaluation of each response with real-time feedback before asking the next question.
+   - Mimics realistic interview pacing.
 
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3. **Install Dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Set Up API Keys**
-```bash
-# Create .env file
-echo "GEMINI_API_KEY=your_api_key_here" > .env
-```
-
-Get your free Google Gemini API key: https://aistudio.google.com/app/apikey
+5. **LinkedIn Content Generator**
+   - AI draft generator with professional, thought leadership, casual, and storytelling styles.
+   - Hooks, formatting, hashtags, and call-to-actions optimized for engagement.
+   - One-click copy-to-clipboard functionality.
 
 ---
 
-## 📖 How to Use
+## 🔒 Open Source Security Architecture
 
-### 1. Resume Optimization Agent
-
-```bash
-python run_resume_optimizer.py --file "your_resume.pdf"
-```
-
-**What it does:**
-- Analyzes your resume for ATS compatibility
-- Suggests keyword improvements
-- Recommends formatting enhancements
-- Provides tailored resume versions by job type
-
-**Example Output:**
-```
-✅ ATS Score: 85/100
-🎯 Missing Keywords: Python, Cloud Architecture, Team Leadership
-📝 Suggestions: Add quantified metrics, improve action verbs
-```
-
----
-
-### 2. Job Matching Agent
-
-```bash
-python run_job_matcher.py --profile "your_profile.json" --job_titles "Data Scientist" "ML Engineer"
-```
-
-**What it does:**
-- Analyzes your profile and skills
-- Searches and matches relevant job openings
-- Provides match percentage and gap analysis
-- Recommends upskilling opportunities
-
----
-
-### 3. Interview Preparation Agent
-
-```bash
-python run_interview_prep.py --job_title "Senior Data Scientist" --company "Google"
-```
-
-**What it does:**
-- Generates company-specific interview questions
-- Provides model answers with explanations
-- Suggests preparation strategies
-- Includes technical and behavioral questions
-
----
-
-### 4. LinkedIn Content Generator
-
-```bash
-python run_linkedin_generator.py --topic "Machine Learning" --style "Professional"
-```
-
-**What it does:**
-- Creates engaging LinkedIn posts
-- Generates article content
-- Suggests hashtags and engagement tactics
-- Optimizes for LinkedIn algorithm
+When hosting applications publicly, hardcoding or exposing server API keys is a major vulnerability. CareerBoost solves this with a **Dual-Mode API Key resolution**:
+- **Local Settings**: If run locally, it reads the `GEMINI_API_KEY` from your local `.env` file.
+- **Client Override**: Users can paste their personal key inside the **Settings** tab. The key is stored in the browser's `localStorage` and sent with each request in the `X-Gemini-API-Key` header.
+- **Git Protection**: The `.env` file is excluded from Git tracking in `.gitignore`.
 
 ---
 
@@ -127,191 +51,95 @@ python run_linkedin_generator.py --topic "Machine Learning" --style "Professiona
 ```
 careerboost-ai-multi-agent-assistant/
 ├── agents/
-│   ├── resume_optimizer.py
-│   ├── job_matcher.py
-│   ├── interview_prep.py
-│   └── linkedin_generator.py
-├── utils/
-│   ├── gemini_client.py
-│   ├── pdf_parser.py
-│   └── validators.py
+│   ├── interview_prep.py     # Guide builder & mock chat simulator agent
+│   ├── job_matcher.py        # Skill overlap and gap analyser agent
+│   ├── linkedin_generator.py # LinkedIn content drafter agent
+│   └── resume_optimizer.py   # PDF text extraction & ATS scorer agent
 ├── config/
-│   ├── settings.py
-│   └── prompts.py
-├── main.py
-├── requirements.txt
-├── .env.example
-└── README.md
+│   ├── prompts.py            # Centralized system instructions & templates
+│   └── settings.py           # Application configurations (Model, Temperature)
+├── static/
+│   ├── index.html            # Stunning Single Page Application dashboard UI
+│   ├── styles.css            # Dark slate glassmorphism styles and animations
+│   └── app.js                # Frontend API state manager and chat router
+├── utils/
+│   ├── gemini_client.py      # Core Google GenAI wrapper supporting dynamic keys
+│   ├── pdf_parser.py         # PyPDF text extraction helper
+│   └── validators.py         # Payload validators
+├── .env.example              # Example environment configuration
+├── app.py                    # FastAPI server entrypoint
+├── requirements.txt          # Python dependencies
+└── README.md                 # Project documentation
 ```
 
 ---
 
-## ⚙️ Configuration
+## 🚀 Quick Start (Local Run)
 
-### Environment Variables (.env)
+### 1. Prerequisites
+- Python 3.10 or higher
+- Google Gemini API Key ([Get one free from Google AI Studio](https://aistudio.google.com/))
 
+### 2. Setup & Installation
+```bash
+# Clone the repository
+git clone https://github.com/AkashKatheriya/careerboost-ai-multi-agent-assistant.git
+cd careerboost-ai-multi-agent-assistant
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Configure local key (Optional)
+Create a `.env` file in the root directory:
 ```env
-# Required
-GEMINI_API_KEY=your_gemini_api_key
-
-# Optional
-MODEL_NAME=gemini-1.5-flash
-TEMPERATURE=0.7
-MAX_TOKENS=2048
-LOG_LEVEL=INFO
+GEMINI_API_KEY=your_actual_api_key_here
 ```
+*(If left empty, the application will boot successfully, and you can paste your key in the settings tab of the web page).*
 
----
-
-## 📊 Example Use Cases
-
-### Case 1: Fresh Graduate Job Hunt
+### 4. Run the Server
 ```bash
-# Step 1: Optimize Resume
-python run_resume_optimizer.py --file "resume.pdf" --target "Entry-Level Data Scientist"
-
-# Step 2: Find Matching Jobs
-python run_job_matcher.py --experience_level "entry-level" --location "India"
-
-# Step 3: Prepare for Interviews
-python run_interview_prep.py --job_title "Data Scientist" --company "TCS"
+python -m uvicorn app:app --reload --port 8000
 ```
-
-### Case 2: Career Transition
-```bash
-# Analyze skill gaps
-python run_job_matcher.py --current_role "Software Engineer" --target_role "Data Scientist"
-
-# Get LinkedIn strategy
-python run_linkedin_generator.py --topic "My Data Science Journey" --audience "Tech Professionals"
-```
+Open **[http://localhost:8000](http://localhost:8000)** in your browser!
 
 ---
 
-## 🔑 Key Technologies
+## 🌐 Production Deployment Guide
 
-- **Google Gemini 1.5 Flash** - Advanced multi-modal AI model
-- **Python** - Primary programming language
-- **Langgraph** - Multi-agent orchestration
-- **PDF Processing** - Resume parsing and analysis
-- **REST APIs** - Integration capabilities
+You can host CareerBoost on any Python-capable host. Here are two easy options:
 
----
+### Option A: Hosting on Render (Free Tier)
+1. Commit and push your code to your GitHub repository.
+2. Log in to [Render](https://render.com/) and click **New > Web Service**.
+3. Link your GitHub repository.
+4. Set the configurations:
+   - **Environment**: `Python`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python -m uvicorn app:app --host 0.0.0.0 --port $PORT`
+5. Click **Deploy Web Service**. Render will spin up the server and give you a public URL.
 
-## 💡 Tips for Best Results
-
-1. **Upload Quality Documents**
-   - Use well-formatted resumes in PDF or DOCX
-   - Ensure clear section headers
-
-2. **Detailed Profile Information**
-   - Include skills, certifications, and projects
-   - Mention soft skills and achievements
-
-3. **Job-Specific Preparation**
-   - Provide company name for tailored content
-   - Specify job level (entry, mid, senior)
-
-4. **Regular Updates**
-   - Update your profile with new skills
-   - Refresh resume after completing projects
-
----
-
-## 🛠️ Development
-
-### Running in Development Mode
-
-```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-pytest tests/ -v
-
-# Run with debug logging
-export LOG_LEVEL=DEBUG
-python main.py
-```
-
-### Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
-
----
-
-## 📈 Performance Metrics
-
-- **Resume Analysis Speed**: < 5 seconds
-- **Job Matching Accuracy**: 92%
-- **Interview Prep Coverage**: 50+ question types
-- **LinkedIn Content Generation**: 10+ post formats
-
----
-
-## 🎯 Success Stories
-
-> "CareerBoost helped me identify 15+ relevant job openings and I got 3 interviews in a week!" - Priya S., Data Scientist
-
-> "The interview prep was so thorough. I felt completely prepared for my final round." - Rajesh M., ML Engineer
-
----
-
-## ❓ FAQ
-
-**Q: Is the API key free?**
-A: Yes! Google Gemini offers a generous free tier. Check their documentation for limits.
-
-**Q: Can I use this for multiple users?**
-A: Yes, you can create separate profiles for different users.
-
-**Q: What file formats are supported?**
-A: Currently supports PDF and DOCX formats. More formats coming soon.
-
-**Q: How often should I update my profile?**
-A: Recommended to update every month or after completing new projects.
-
----
-
-## 📞 Support & Contact
-
-- **GitHub Issues**: [Report bugs or suggest features](https://github.com/AkashKatheriya/careerboost-ai-multi-agent-assistant/issues)
-- **Email**: akash.katheriya@example.com
-- **LinkedIn**: [Connect with me](https://www.linkedin.com/in/akash-katheriya-web-developer/)
+### Option B: Hosting on Hugging Face Spaces (100% Free)
+1. Create a new Space on [Hugging Face](https://huggingface.co/spaces).
+2. Choose **Docker** as the SDK (select **Blank** template).
+3. Create a `Dockerfile` in the root of your project:
+   ```dockerfile
+   FROM python:3.11-slim
+   WORKDIR /code
+   COPY ./requirements.txt /code/requirements.txt
+   RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+   COPY . .
+   CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+   ```
+4. Push your code to the Hugging Face Space git repository. Hugging Face will build the Docker container and host it automatically.
 
 ---
 
 ## 📜 License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-## 🙏 Acknowledgments
-
-- Google AI Agents Intensive Capstone Project
-- Google Gemini API Team
-- Open source community
-
----
-
-## 🚀 Roadmap
-
-- [ ] Web UI Dashboard (Streamlit/FastAPI)
-- [ ] Mobile App (React Native)
-- [ ] Advanced Analytics Dashboard
-- [ ] Integration with LinkedIn API
-- [ ] Salary Negotiation Assistant
-- [ ] Portfolio Builder
-- [ ] Network Connection Analyzer
-
----
-
 **Made with ❤️ by Akash Katheriya**
-
-Give it a ⭐ if you find it helpful!
