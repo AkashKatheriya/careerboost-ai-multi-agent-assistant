@@ -1,6 +1,10 @@
 # 🤖 CareerBoost AI Multi-Agent Assistant
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/AkashKatheriya/careerboost-ai-multi-agent-assistant)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **CareerBoost AI** is an intelligent, multi-agent career assistant powered by **Google Gemini 2.5 Flash** (via the official `google-genai` SDK). It provides a visually stunning, glassmorphic Single Page Application (SPA) dashboard helping job seekers optimize resumes, match candidate profiles to roles, prepare for interviews with an interactive mock recruiter chat, and generate engaging LinkedIn content.
+
 
 Designed specifically to be **open-source friendly and safe to host**, visitors can supply their own Gemini API key inside the UI settings (saved only in their local browser storage and transmitted via request headers).
 
